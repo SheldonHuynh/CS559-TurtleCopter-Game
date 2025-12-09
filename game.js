@@ -266,6 +266,8 @@ function animate() {
         player.verticalSpeed = 0;
     }
 
+    player.update(dt);
+
     // --- AUDIO & CAMERA ---
     const speed = player.velocity.length();
     const speedRatio = Math.min(speed / 150, 1.0);
