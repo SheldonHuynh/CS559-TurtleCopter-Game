@@ -200,11 +200,11 @@ const WorldGen = {
         return life;
     },
 
-    createRewards: function(scene, trackCurve) {
+createRewards: function(scene, trackCurve) {
         const powerFish = [];
         const boostPads = [];
 
-        // 1. Power Fish (Restore Energy) - Place 20 of them underwater
+        // 1. Power Fish (Restore Energy) 
         for(let i=0; i<20; i++) {
             const fish = new PowerFish();
             const t = Math.random();
@@ -212,10 +212,12 @@ const WorldGen = {
             const tangent = trackCurve.getTangent(t);
             const normal = new THREE.Vector3(-tangent.z, 0, tangent.x).normalize();
             
-            // Offset from center, and DEEP (-30 to -80)
+            // Offset from center
             const offset = (Math.random() - 0.5) * CONFIG.trackWidth * 1.5;
             fish.mesh.position.copy(pt).add(normal.multiplyScalar(offset));
-            fish.mesh.position.y = -30 - Math.random() * 50; 
+            
+            // NEW: Raise height. Previously -30 to -80. Now -5 to -15 (Just under surface)
+            fish.mesh.position.y = -5 - Math.random() * 10; 
             
             scene.add(fish.mesh);
             powerFish.push(fish);

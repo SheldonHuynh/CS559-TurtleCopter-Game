@@ -11,12 +11,12 @@ const CONFIG = {
     gravity: 80,
     buoyancy: 100,
     waterDrag: 0.9,
-    diveSpeed: 800,
-    surfaceSpeed: 80, 
+    diveSpeed: 160,
+    surfaceSpeed: 0, 
     floorLimit: -150,
 
     // FLIGHT METER SETTINGS
     maxFlightEnergy: 100,
-    flightDrain: 40,      // Drains in ~2.5 seconds
-    flightRegen: 25       // Refills in ~4 seconds
+    flightDrain: 100,
+    flightRegen: 5       
 };

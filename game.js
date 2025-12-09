@@ -207,7 +207,19 @@ function animate() {
     const isUnderwater = player.mesh.position.y < waveH;
 
     let attemptingFly = gameState.inputs.surface;
-    let canFly = player.flightEnergy > 0;
+
+    // NEW LOGIC: FLIGHT OVERHEAT
+    // 1. If energy hits 0, set overheated to true
+    if (player.flightEnergy <= 0) {
+        player.isOverheated = true;
+    }
+    // 2. If energy refills to max, reset overheated to false
+    if (player.flightEnergy >= CONFIG.maxFlightEnergy) {
+        player.isOverheated = false;
+    }
+    
+    // 3. Can only fly if we have energy AND we are not overheated
+    let canFly = player.flightEnergy > 0 && !player.isOverheated;
     
     if (isUnderwater) {
         player.verticalSpeed += CONFIG.buoyancy * dt;
@@ -228,8 +240,17 @@ function animate() {
     }
     
     player.flightEnergy = Math.max(0, Math.min(player.flightEnergy, CONFIG.maxFlightEnergy));
+    
+    // UI Update with Color change for Overheat
     const pct = (player.flightEnergy / CONFIG.maxFlightEnergy) * 100;
-    document.getElementById('flight-bar-fill').style.width = pct + "%";
+    const barFill = document.getElementById('flight-bar-fill');
+    barFill.style.width = pct + "%";
+    
+    if (player.isOverheated) {
+        barFill.style.background = "#ff3333"; // Red warning color
+    } else {
+        barFill.style.background = "linear-gradient(90deg, #ffcc00, #ff6600)"; // Original color
+    }
     
     player.mesh.position.y += player.verticalSpeed * dt;
     if(player.mesh.position.y < CONFIG.floorLimit) {
@@ -237,8 +258,13 @@ function animate() {
         player.verticalSpeed = 0;
     }
 
-    player.mesh.position.add(player.velocity.clone().multiplyScalar(dt));
-    player.update(dt);
+    player.mesh.position.add(player.velocity.clone().multiplyScalar(dt)); // <--- ADD THIS LINE
+    
+    player.mesh.position.y += player.verticalSpeed * dt;
+    if(player.mesh.position.y < CONFIG.floorLimit) {
+        player.mesh.position.y = CONFIG.floorLimit;
+        player.verticalSpeed = 0;
+    }
 
     // --- AUDIO & CAMERA ---
     const speed = player.velocity.length();

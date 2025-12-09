@@ -124,7 +124,10 @@ class TurtleCopter {
         this.bankAngle = 0;
         this.pitchAngle = 0; 
         this.verticalSpeed = 0; 
-        this.flightEnergy = CONFIG.maxFlightEnergy; 
+        this.flightEnergy = CONFIG.maxFlightEnergy;
+        
+        // NEW: Track if the engine is overheated (fully drained)
+        this.isOverheated = false; 
         
         const shellMat = new THREE.MeshToonMaterial({ color: 0x2E8B57 }); 
         const skinMat = new THREE.MeshToonMaterial({ color: 0x90EE90 }); 
