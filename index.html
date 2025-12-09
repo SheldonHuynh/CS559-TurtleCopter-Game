@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turtle Copter Drift</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="underwater-overlay"></div>
+
+<div id="game-over-screen">
+    <h1>RACE FINISHED!</h1>
+    <div id="final-rank">POS: 1/4</div>
+    <button onclick="restartGame()">PLAY AGAIN</button>
+</div>
+
+<div id="ui-layer">
+    <div id="hud-top">
+        <div>POS: <span id="rank">1</span>/4</div>
+        <div>LAP: <span id="lap">1</span>/3</div>
+    </div>
+    <div id="respawn-msg">UNDERWATER!</div>
+    <div id="hud-bottom">
+        <div class="tutorial">ARROWS to Move • SPACE to Drift</div>
+        <div id="speed">0 KM/H</div>
+    </div>
+</div>
+
+<div id="canvas-container"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script src="config.js"></script>
+<script src="shaders.js"></script>
+<script src="classes.js"></script>
+<script src="utils.js"></script>
+<script src="world_gen.js"></script>
+<script src="game.js"></script>
+
+</body>
+</html>
