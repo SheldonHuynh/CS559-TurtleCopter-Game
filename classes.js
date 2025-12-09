@@ -187,7 +187,75 @@ class TurtleCopter {
     }
 }
 
+class Dolphin {
+    constructor() {
+        // 1. Create a container group
+        this.mesh = new THREE.Group();
+
+        // 2. Create the Original Primitive Mesh
+        const geo = new THREE.SphereGeometry(1.5, 16, 16);
+        geo.applyMatrix4(new THREE.Matrix4().makeScale(1, 3, 1));
+        geo.rotateX(Math.PI / 2);
+        
+        this.primitiveMesh = new THREE.Mesh(geo, new THREE.MeshToonMaterial({ color: 0x8888cc }));
+        this.mesh.add(this.primitiveMesh);
+
+        // 3. Create a holder for the Custom 3D Model
+        // (The model will be added here later by game.js)
+        this.customModel = new THREE.Group();
+        this.customModel.visible = false; // Hidden by default
+        
+        // Adjust rotation/scale to match the primitive's orientation
+        this.customModel.rotation.y = Math.PI; 
+        this.customModel.scale.set(7.5, 7.5, 7.5); 
+        
+        this.mesh.add(this.customModel);
+
+        // Physics/Movement properties
+        this.basePos = new THREE.Vector3((Math.random() - 0.5) * 1000, -10, (Math.random() - 0.5) * 1000);
+        this.timer = Math.random() * 10;
+    }
+
+    // New helper to toggle modes
+    setMode(useRealModel) {
+        // Only switch if the custom model actually has children (is loaded)
+        if (useRealModel && this.customModel.children.length > 0) {
+            this.primitiveMesh.visible = false;
+            this.customModel.visible = true;
+        } else {
+            this.primitiveMesh.visible = true;
+            this.customModel.visible = false;
+        }
+    }
+
+    update(dt, time) {
+        this.timer += dt;
+        const cycle = this.timer % 8;
+        
+        if (cycle < 2) {
+            // Jump logic
+            const t = cycle / 2;
+            const height = (-4 * Math.pow(t - 0.5, 2) + 1) * 20;
+            this.mesh.position.y = -5 + height;
+            this.mesh.position.x = this.basePos.x + t * 40;
+            this.mesh.rotation.z = (0.5 - t) * 2.0;
+
+            // Splash effect
+            if (window.spawnSparks && Math.abs(this.mesh.position.y) < 1) {
+                window.spawnSparks(this.mesh.position, 1, 'splash');
+            }
+        } else {
+            // Swim logic
+            this.mesh.position.y = -10;
+            this.mesh.rotation.z = 0;
+            this.basePos.z += 5 * dt;
+            this.mesh.position.x = this.basePos.x;
+            this.mesh.position.z = this.basePos.z;
+        }
+    }
+}
+
+
 // Visual classes
 class Seagull { constructor() { const geo = new THREE.BufferGeometry(); const vertices = new Float32Array([0, 0, 0, 1, 0, 0.5, -1, 0, 0.5]); geo.setAttribute('position', new THREE.BufferAttribute(vertices, 3)); this.mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide})); this.center = new THREE.Vector3((Math.random()-0.5)*1000, 50 + Math.random()*50, (Math.random()-0.5)*1000); this.radius = 50 + Math.random() * 100; this.speed = 0.5 + Math.random() * 0.5; this.angle = Math.random() * Math.PI * 2; } update(dt, time) { this.angle += this.speed * dt; this.mesh.position.x = this.center.x + Math.cos(this.angle) * this.radius; this.mesh.position.z = this.center.z + Math.sin(this.angle) * this.radius; this.mesh.position.y = this.center.y + Math.sin(time + this.angle) * 5; this.mesh.scale.z = Math.sin(time * 15) * 0.5 + 1; this.mesh.lookAt(this.center.x + Math.cos(this.angle+0.1)*this.radius, this.mesh.position.y, this.center.z + Math.sin(this.angle+0.1)*this.radius); } }
 class FishSchool { constructor() { this.mesh = new THREE.Group(); this.center = new THREE.Vector3((Math.random()-0.5)*800, -10 - Math.random()*20, (Math.random()-0.5)*800); const fishGeo = new THREE.ConeGeometry(0.5, 2, 4); fishGeo.rotateX(Math.PI/2); const fishMat = new THREE.MeshBasicMaterial({color: 0xffaa00}); for(let i=0; i<10; i++) { const fish = new THREE.Mesh(fishGeo, fishMat); fish.position.set((Math.random()-0.5)*10, (Math.random()-0.5)*5, (Math.random()-0.5)*10); this.mesh.add(fish); } this.velocity = new THREE.Vector3(1, 0, 0).applyAxisAngle(new THREE.Vector3(0,1,0), Math.random()*Math.PI*2); } update(dt) { this.mesh.position.add(this.velocity.clone().multiplyScalar(10 * dt)); if(this.mesh.position.x > 1500) this.mesh.position.x = -1500; if(this.mesh.position.x < -1500) this.mesh.position.x = 1500; if(this.mesh.position.z > 1500) this.mesh.position.z = -1500; if(this.mesh.position.z < -1500) this.mesh.position.z = 1500; this.mesh.lookAt(this.mesh.position.clone().add(this.velocity)); } }
-class Dolphin { constructor() { const geo = new THREE.SphereGeometry(1.5, 16, 16); geo.applyMatrix4(new THREE.Matrix4().makeScale(1, 3, 1)); geo.rotateX(Math.PI/2); this.mesh = new THREE.Mesh(geo, new THREE.MeshToonMaterial({color: 0x8888cc})); this.basePos = new THREE.Vector3((Math.random()-0.5)*1000, -10, (Math.random()-0.5)*1000); this.timer = Math.random() * 10; } update(dt, time) { this.timer += dt; const cycle = this.timer % 8; if (cycle < 2) { const t = cycle / 2; const height = (-4 * Math.pow(t - 0.5, 2) + 1) * 20; this.mesh.position.y = -5 + height; this.mesh.position.x = this.basePos.x + t * 40; this.mesh.rotation.z = (0.5 - t) * 2.0; if(window.spawnSparks && Math.abs(this.mesh.position.y) < 1) window.spawnSparks(this.mesh.position, 1, 'splash'); } else { this.mesh.position.y = -10; this.mesh.rotation.z = 0; this.basePos.z += 5 * dt; this.mesh.position.x = this.basePos.x; this.mesh.position.z = this.basePos.z; } } }

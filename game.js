@@ -66,6 +66,47 @@ function init() {
     particleSys = new ParticleSystem(scene);
     audioSys = new AudioSynth();
 
+    // --- DOLPHIN MODEL LOADING ---
+    let loadedDolphinModel = null;
+    const mtlLoader = new THREE.MTLLoader();
+    const objLoader = new THREE.OBJLoader();
+
+    // Load MTL and OBJ
+    mtlLoader.load('./assets/Dolphin.mtl', (materials) => {
+        materials.preload();
+        objLoader.setMaterials(materials);
+        objLoader.load('./assets/Dolphin.obj', (object) => {
+            loadedDolphinModel = object;
+            console.log("Dolphin Loaded!");
+            
+            // If the user already clicked the checkbox before load finished:
+            const checkbox = document.getElementById('chk-real-dolphin');
+            if(checkbox.checked) updateDolphins(true);
+        });
+    });
+
+    // Handle Checkbox Toggle
+    document.getElementById('chk-real-dolphin').addEventListener('change', (e) => {
+        updateDolphins(e.target.checked);
+    });
+
+    function updateDolphins(useReal) {
+        // If we want real dolphins but haven't loaded yet, do nothing (wait for load)
+        if (useReal && !loadedDolphinModel) return;
+
+        // Apply to all dolphins in the game
+        life.dolphins.forEach(dolphin => {
+            // If the dolphin doesn't have the model yet, clone and add it
+            if (dolphin.customModel.children.length === 0 && loadedDolphinModel) {
+                const modelClone = loadedDolphinModel.clone();
+                dolphin.customModel.add(modelClone);
+            }
+            // Toggle visibility
+            dolphin.setMode(useReal);
+        });
+    }
+
+
     // --- PLAYER & AI ---
     player = new TurtleCopter(0xff0000, true); 
     scene.add(player.mesh);
