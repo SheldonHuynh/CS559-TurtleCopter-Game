@@ -22,8 +22,17 @@
         <div>LAP: <span id="lap">1</span>/3</div>
     </div>
     <div id="respawn-msg">UNDERWATER!</div>
+    
     <div id="hud-bottom">
-        <div class="tutorial">ARROWS to Move • SPACE to Drift</div>
+        <div class="tutorial">ARROWS to Move • SHIFT to Dive • W to Fly</div>
+        
+        <div id="meter-container">
+            <div id="flight-label">ROTOR POWER</div>
+            <div id="flight-bar-bg">
+                <div id="flight-bar-fill"></div>
+            </div>
+        </div>
+
         <div id="speed">0 KM/H</div>
     </div>
 </div>
@@ -32,7 +41,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-<script src="config.js"></script>
+<script src="audio.js"></script> <script src="config.js"></script>
 <script src="shaders.js"></script>
 <script src="classes.js"></script>
 <script src="utils.js"></script>

@@ -5,6 +5,18 @@ const CONFIG = {
     turnSpeed: 1.8,       
     driftTurnMult: 2.5,   
     trackWidth: 45,
-    resetHeight: -15,
-    totalLaps: 3
+    totalLaps: 3,
+    
+    // PHYSICS
+    gravity: 80,
+    buoyancy: 100,
+    waterDrag: 0.9,
+    diveSpeed: 800,
+    surfaceSpeed: 80, 
+    floorLimit: -150,
+
+    // FLIGHT METER SETTINGS
+    maxFlightEnergy: 100,
+    flightDrain: 40,      // Drains in ~2.5 seconds
+    flightRegen: 25       // Refills in ~4 seconds
 };
